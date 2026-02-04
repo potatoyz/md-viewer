@@ -37,12 +37,6 @@ function useDebouncedCallback(fn: () => void, delayMs: number) {
 export default function DocEditorPage({ params }: { params: { id: string } }) {
   const router = useRouter();
 
-  // Guard against bad routes like /docs/undefined that would cause PB "Missing required record id".
-  useEffect(() => {
-    if (!params?.id || params.id === "undefined") {
-      router.replace("/docs");
-    }
-  }, [params?.id, router]);
   const [docs, setDocs] = useState<DocumentRecord[]>([]);
   const [doc, setDoc] = useState<DocumentRecord | null>(null);
   const [title, setTitle] = useState("");
@@ -95,12 +89,19 @@ export default function DocEditorPage({ params }: { params: { id: string } }) {
   }
 
   useEffect(() => {
+    // Guard invalid route params first
+    if (!params?.id || params.id === "undefined") {
+      router.replace("/docs");
+      return;
+    }
+
     // If auth is missing, go login instead of hammering PB and causing loops.
     // (PB may reply with 404 to hide protected collections.)
     if (!pb.authStore.isValid) {
       router.replace("/login");
       return;
     }
+
     refreshList();
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps

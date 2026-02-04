@@ -17,6 +17,9 @@ export async function logout() {
 }
 
 export async function getDocument(id: string): Promise<DocumentRecord> {
+  if (!id || id === "undefined") {
+    throw new Error("Missing required record id");
+  }
   return pb.collection(DOCS).getOne<DocumentRecord>(id);
 }
 
