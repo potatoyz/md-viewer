@@ -15,10 +15,12 @@ import { Separator } from "@/components/ui/separator";
 
 import type { DocumentRecord } from "@/lib/types";
 import { extractHeadings } from "@/lib/markdown";
+import { isPbAuthError } from "@/lib/errors";
 import {
   createDocument,
   getDocument,
   listDocuments,
+  logout,
   updateDocument,
   uploadAsset,
 } from "@/services/documents";
@@ -49,9 +51,12 @@ export default function DocEditorPage({ params }: { params: { id: string } }) {
       const items = await listDocuments();
       setDocs(items);
     } catch (e: unknown) {
+      if (isPbAuthError(e)) {
+        router.replace("/login");
+        return;
+      }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const msg = (e as any)?.message || String(e);
-      // likely not logged-in / PB rules; keep UI but show message
       setError(msg);
     }
   }
@@ -72,6 +77,10 @@ export default function DocEditorPage({ params }: { params: { id: string } }) {
         setSave({ kind: "dirty" });
       }
     } catch (e: unknown) {
+      if (isPbAuthError(e)) {
+        router.replace("/login");
+        return;
+      }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setError((e as any)?.message || String(e));
     }
@@ -135,6 +144,10 @@ export default function DocEditorPage({ params }: { params: { id: string } }) {
       const snippet = `\n\n![](${url})\n`;
       onChangeMd(md + snippet);
     } catch (e: unknown) {
+      if (isPbAuthError(e)) {
+        router.replace("/login");
+        return;
+      }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setError((e as any)?.message || String(e));
     }
@@ -155,6 +168,15 @@ export default function DocEditorPage({ params }: { params: { id: string } }) {
           <SaveBadge state={save} />
 
           <div className="ml-auto flex items-center gap-2">
+            <Button
+              variant="ghost"
+              onClick={() => {
+                logout();
+                router.replace("/login");
+              }}
+            >
+              退出
+            </Button>
             <label className="cursor-pointer">
               <input
                 type="file"

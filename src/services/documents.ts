@@ -12,6 +12,10 @@ export async function listDocuments(): Promise<DocumentRecord[]> {
   return res.items;
 }
 
+export async function logout() {
+  pb.authStore.clear();
+}
+
 export async function getDocument(id: string): Promise<DocumentRecord> {
   return pb.collection(DOCS).getOne<DocumentRecord>(id);
 }

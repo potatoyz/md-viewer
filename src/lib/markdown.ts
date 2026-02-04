@@ -42,7 +42,9 @@ export function extractHeadings(markdown: string): HeadingItem[] {
         out.push({ depth: n.depth, text, id });
       }
     }
-    if (Array.isArray((n as any).children)) (n as any).children.forEach(walk);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const children = (n as any).children as any[] | undefined;
+    if (Array.isArray(children)) children.forEach(walk);
   }
 
   walk(tree);
