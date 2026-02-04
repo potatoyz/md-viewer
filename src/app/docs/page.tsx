@@ -19,6 +19,9 @@ export default function DocsIndex() {
           return;
         }
         const created = await createDocument();
+        if (!created?.id) {
+          throw new Error("createDocument() did not return an id");
+        }
         router.replace(`/docs/${created.id}`);
       } catch (e: unknown) {
         if (isPbAuthError(e)) {

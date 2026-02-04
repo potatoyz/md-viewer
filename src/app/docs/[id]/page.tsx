@@ -35,6 +35,13 @@ function useDebouncedCallback(fn: () => void, delayMs: number) {
 
 export default function DocEditorPage({ params }: { params: { id: string } }) {
   const router = useRouter();
+
+  // Guard against bad routes like /docs/undefined that would cause PB "Missing required record id".
+  useEffect(() => {
+    if (!params?.id || params.id === "undefined") {
+      router.replace("/docs");
+    }
+  }, [params?.id, router]);
   const [docs, setDocs] = useState<DocumentRecord[]>([]);
   const [doc, setDoc] = useState<DocumentRecord | null>(null);
   const [title, setTitle] = useState("");
