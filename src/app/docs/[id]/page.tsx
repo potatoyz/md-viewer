@@ -93,8 +93,13 @@ export default function DocEditorPage({ params }: { params: { id: string } }) {
   }
 
   useEffect(() => {
-    // Guard invalid route params first
-    if (!isValidRecordId(params?.id)) {
+    // During client-side navigation/hydration, params.id may be temporarily undefined.
+    // Don't redirect in that transient state.
+    const id = params?.id;
+    if (!id) return;
+
+    // Guard invalid route params (e.g. /docs/undefined)
+    if (!isValidRecordId(id)) {
       router.replace("/docs");
       return;
     }
@@ -109,7 +114,7 @@ export default function DocEditorPage({ params }: { params: { id: string } }) {
     refreshList();
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params.id]);
+  }, [params?.id]);
 
   const debouncedSave = useDebouncedCallback(async () => {
     if (!doc) return;
