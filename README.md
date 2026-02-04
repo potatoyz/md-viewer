@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# md-viewer
 
-## Getting Started
+Single-user Markdown docs (Yuque-ish): edit + preview + autosave + outline + images.
 
-First, run the development server:
+## Requirements
+
+- Node.js (this server uses Node via nvm)
+- PocketBase running at `https://pb.potatoyz.tech`
+
+## Local dev
 
 ```bash
+cp .env.example .env.local
+npm i
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Production on this server
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Served via Caddy: `https://md.potatoyz.tech` -> `localhost:3010`
+- systemd service: `md-viewer`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+sudo systemctl restart md-viewer
+sudo journalctl -u md-viewer -f
+```
 
-## Learn More
+## PocketBase collections (planned)
 
-To learn more about Next.js, take a look at the following resources:
+- `documents`: `{ title, content_md, version }`
+- `assets`: `{ doc (relation->documents), file (file) }`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Auth rules are expected to be handled in PocketBase (existing account system).
