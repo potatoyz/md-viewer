@@ -31,11 +31,16 @@ export async function createDocument(input?: {
   const title = input?.title || `Untitled ${now.toISOString().slice(0, 10)}`;
   const content_md = input?.content_md || "# 新文档\n\n开始写吧。\n";
 
-  return pb.collection(DOCS).create<DocumentRecord>({
+  const rec = await pb.collection(DOCS).create<DocumentRecord>({
     title,
     content_md,
     version: 1,
   });
+
+  if (!rec?.id) {
+    throw new Error("createDocument failed: missing id in response");
+  }
+  return rec;
 }
 
 export async function updateDocument(

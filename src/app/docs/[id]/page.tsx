@@ -15,7 +15,7 @@ import { Separator } from "@/components/ui/separator";
 
 import type { DocumentRecord } from "@/lib/types";
 import { extractHeadings } from "@/lib/markdown";
-import { isPbAuthError } from "@/lib/errors";
+import { isPbAuthError, isPbMissingIdError, isValidRecordId } from "@/lib/errors";
 import { pb } from "@/lib/pb";
 import {
   createDocument,
@@ -83,6 +83,10 @@ export default function DocEditorPage({ params }: { params: { id: string } }) {
         router.replace("/login");
         return;
       }
+      if (isPbMissingIdError(e)) {
+        router.replace("/docs");
+        return;
+      }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setError((e as any)?.message || String(e));
     }
@@ -90,7 +94,7 @@ export default function DocEditorPage({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     // Guard invalid route params first
-    if (!params?.id || params.id === "undefined") {
+    if (!isValidRecordId(params?.id)) {
       router.replace("/docs");
       return;
     }

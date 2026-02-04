@@ -11,3 +11,15 @@ export function isPbAuthError(e: unknown): boolean {
 
   return status === 401 || status === 403 || looksLikeHiddenByRule;
 }
+
+export function isPbMissingIdError(e: unknown): boolean {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const message = String((e as any)?.message || "");
+  return message.toLowerCase().includes("missing required record id");
+}
+
+export function isValidRecordId(id: string | undefined | null): id is string {
+  if (!id) return false;
+  // PB default record ids are 15-char base32-ish lowercase a-z0-9.
+  return /^[a-z0-9]{15}$/.test(id);
+}
