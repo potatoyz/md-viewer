@@ -21,6 +21,8 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await pb.collection("users").authWithPassword(email, password);
+      // Immediately refresh to ensure token is valid and persisted
+      await pb.collection("users").authRefresh();
       router.replace("/docs");
     } catch (err: unknown) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

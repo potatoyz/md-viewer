@@ -16,6 +16,7 @@ import { Separator } from "@/components/ui/separator";
 import type { DocumentRecord } from "@/lib/types";
 import { extractHeadings } from "@/lib/markdown";
 import { isPbAuthError } from "@/lib/errors";
+import { pb } from "@/lib/pb";
 import {
   createDocument,
   getDocument,
@@ -94,6 +95,12 @@ export default function DocEditorPage({ params }: { params: { id: string } }) {
   }
 
   useEffect(() => {
+    // If auth is missing, go login instead of hammering PB and causing loops.
+    // (PB may reply with 404 to hide protected collections.)
+    if (!pb.authStore.isValid) {
+      router.replace("/login");
+      return;
+    }
     refreshList();
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps

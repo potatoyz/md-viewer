@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { isPbAuthError } from "@/lib/errors";
+import { pb } from "@/lib/pb";
 import { listDocuments, createDocument } from "@/services/documents";
 
 export default function DocsIndex() {
@@ -13,6 +14,10 @@ export default function DocsIndex() {
   useEffect(() => {
     (async () => {
       try {
+        if (!pb.authStore.isValid) {
+          router.replace("/login");
+          return;
+        }
         const docs = await listDocuments();
         if (docs[0]?.id) {
           router.replace(`/docs/${docs[0].id}`);
