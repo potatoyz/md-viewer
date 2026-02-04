@@ -4,26 +4,29 @@ Single-user Markdown docs (Yuque-ish): edit + preview + autosave + outline + ima
 
 ## Requirements
 
-- Node.js (this server uses Node via nvm)
-- PocketBase running at `https://pb.potatoyz.tech`
+- Node.js
+- PocketBase (set `NEXT_PUBLIC_PB_URL`)
+
+## Environment
+
+Create `.env.local`:
+
+```bash
+NEXT_PUBLIC_PB_URL=https://<your-pocketbase-domain>
+```
 
 ## Local dev
 
 ```bash
-cp .env.example .env.local
 npm i
 npm run dev
 ```
 
-## Production on this server
-
-- Served via Caddy: `https://md.potatoyz.tech` -> `localhost:3010`
-- systemd service: `md-viewer`
+## Build
 
 ```bash
 npm run build
-sudo systemctl restart md-viewer
-sudo journalctl -u md-viewer -f
+npm run start
 ```
 
 ## PocketBase collections (planned)
